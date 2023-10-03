@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+
+# IDE (por exemplo, VSCode, PyCharm)
+.vscode/
+*.code-workspace
+*.code-workspace.bak
+
+# Logs
+*.log
+
+node_modules
+
+# Arquivos de ambiente
+.env
+
+# Arquivos de compilação
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db

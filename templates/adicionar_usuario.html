@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Usuário</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="font-sans">
+
+    <nav class="bg-gray-800 p-4">
+        <a href="{{ url_for('main_routes.painel_admin') }}"
+            class="text-white hover:bg-gray-600 px-4 py-2 rounded">Usuários</a>
+        <a href="{{ url_for('main_routes.cadastrar_empresa') }}"
+            class="text-white hover:bg-gray-600 px-4 py-2 rounded">Cadastrar Empresa</a>
+    </nav>
+
+    <div class="w-full max-w-md mx-auto mt-8">
+        <h1 class="text-2xl font-bold mb-4">Adicionar Usuário</h1>
+
+        <!-- Exibir mensagens de erro ou sucesso -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="message">{{ message }}</li>
+            {% endfor %}
+
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('main_routes.adicionar_usuario') }}" class="mb-4">
+            <div class="mb-4">
+                <label for="cpf" class="block text-gray-600 text-sm font-semibold mb-2">CPF:</label>
+                <input type="text" name="cpf" id="cpf" class="w-full p-2 border rounded" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="nome_completo" class="block text-gray-600 text-sm font-semibold mb-2">Nome Completo:</label>
+                <input type="text" name="nome_completo" id="nome_completo" class="w-full p-2 border rounded" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="contato" class="block text-gray-600 text-sm font-semibold mb-2">Contato:</label>
+                <input type="text" name="contato" id="contato" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="cep" class="block text-gray-600 text-sm font-semibold mb-2">CEP:</label>
+                <input type="text" name="cep" id="cep" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="rua" class="block text-gray-600 text-sm font-semibold mb-2">Rua:</label>
+                <input type="text" name="rua" id="rua" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="bairro" class="block text-gray-600 text-sm font-semibold mb-2">Bairro:</label>
+                <input type="text" name="bairro" id="bairro" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="numero" class="block text-gray-600 text-sm font-semibold mb-2">Número:</label>
+                <input type="text" name="numero" id="numero" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="complemento" class="block text-gray-600 text-sm font-semibold mb-2">Complemento:</label>
+                <input type="text" name="complemento" id="complemento" class="w-full p-2 border rounded">
+            </div>
+
+            <div class="mb-4">
+                <label for="empresa" class="block text-gray-600 text-sm font-semibold mb-2">Empresa</label>
+                <select class="w-full p-2 border rounded" id="empresa" name="empresa">
+                    {% for empresa in empresas %}
+                        <option value="{{ empresa.nome }}">{{ empresa.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="funcoes" class="block text-gray-600 text-sm font-semibold mb-2">Funções:</label>
+                <select name="funcoes" id="funcoes" class="w-full p-2 border rounded">
+                    <option value="diretor">Diretor</option>
+                    <option value="professor">Professor</option>
+                    <option value="secretaria">Secretaria</option>
+                    <option value="financeiro">Financeiro</option>
+                </select>
+            </div>
+
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Adicionar</button>
+        </form>
+    </div>
+
+</body>
+
+</html>

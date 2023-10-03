@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/tailwind.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/login.css') }}">
+</head>
+
+<!-- ... (restante do HTML) ... -->
+
+
+<body class="bg-gray-200 flex items-center justify-center min-h-screen">
+    <div class="text-center w-full max-w-md">
+        <!-- Se o login falhar, exibir a mensagem e permanecer na mesma página -->
+        {% if erro %}
+        <h1 id="errorMessage" class="text-4xl font-bold text-red-500 mb-4">{{ erro }}</h1>
+        {% endif %}
+
+        <h1 class="text-4xl font-bold mb-4">Login Administrador</h1>
+        <!-- ... (conteúdo anterior) ... -->
+
+        <form id="loginForm" method="POST" action="{{ url_for('main_routes.admin_login') }}" class="mb-4">
+            <div class="mb-4">
+                <label for="username" class="block text-gray-600 text-sm font-semibold mb-2">Usuário:</label>
+                <input type="text" name="username" id="username" class="form-input">
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="block text-gray-600 text-sm font-semibold mb-2">Senha:</label>
+                <div class="relative">
+                    <input type="password" name="password" id="password" class="w-full p-2 border rounded">
+                    <button type="button" id="showPasswordToggle"
+                        class="absolute right-0 top-0 mt-3 mr-4 cursor-pointer text-gray-600 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M1 1h22m0 22H1M4 4a2 2 0 00-2 2M4 4a2 2 0 012 2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Login
+                </button>
+            </div>
+        </form>
+
+        <!-- ... (conteúdo posterior) ... -->
+
+
+    </div>
+
+    <!-- Adicione o script no final do corpo do HTML -->
+    <script src="{{ url_for('static', filename='js/login_admin.js') }}"></script>
+
+    <!-- Adicione uma instrução Jinja para gerar a URL correta para 'main_routes.painel_admin' -->
+    <script>
+        const painelAdminUrl = "{{ url_for('main_routes.painel_admin') }}";
+    </script>
+</body>
+
+</html>

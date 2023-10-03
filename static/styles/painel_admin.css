@@ -1,0 +1,72 @@
+/* Adicione espaçamento vertical e horizontal para a tabela */
+.table {
+    border-spacing: 0;
+    width: 100%;
+    background-color: white;
+}
+
+/* Estilo de linhas alternadas */
+.table tr:nth-child(even) {
+    background-color: #f0f4f8;
+}
+
+/* Estilize os botões de ação */
+.table button {
+    padding: 8px;
+    border-radius: 4px;
+    margin-right: 4px; /* Espaçamento entre botões */
+}
+
+/* Estilo de coluna para CPF */
+.table td:first-child,
+.table th:first-child {
+    padding: 8px;
+    width: 150px; /* Ajuste conforme necessário */
+}
+
+/* Estilo de coluna para Nome Completo */
+.table td:nth-child(2),
+.table th:nth-child(2) {
+    padding: 12px; /* Ajuste conforme necessário */
+    width: 150px;
+}
+
+/* Estilo de coluna para Empresa */
+.table td:nth-child(3),
+.table th:nth-child(3) {
+    padding: 16px; /* Ajuste conforme necessário */
+}
+
+/* Estilo de coluna para Funções */
+.table td:nth-child(4),
+.table th:nth-child(4) {
+    padding: 12px; /* Ajuste conforme necessário */
+    width: 230px;
+}
+
+/* Estilo de coluna para Ações */
+.table td:last-child,
+.table th:last-child {
+    padding: 8px;
+    width: 200px; /* Ajuste conforme necessário */
+}
+
+.btn-yellow {
+    background-color: #ecc94b;
+    color: #1a202c;
+}
+
+.btn-red {
+    background-color: #f56565;
+    color: #fff;
+}
+
+.message.error {
+    color: #eb0a0a;  /* Cor amarela */
+    /* Outros estilos de mensagem de erro, se necessário */
+}
+
+/* Adicione isso ao seu arquivo de estilo ou em linha conforme necessário */
+.bg-red-500:hover {
+    background-color: #e53e3e; /* Adapte a cor conforme necessário */
+}

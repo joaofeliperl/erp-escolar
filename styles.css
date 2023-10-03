@@ -1,0 +1,20 @@
+/* styles.css */
+
+/* Importando o Tailwind CSS */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Adicionando estilos personalizados aqui, se necessário */
+
+/* Exemplo de classe personalizada */
+.custom-bg {
+    background-color: #ffcc00; /* Substitua pela cor desejada */
+}
+
+/* Exemplo de classe personalizada para espaçamento */
+.custom-margin {
+    margin: 20px; /* Substitua pelo valor desejado */
+}
+
+/* Adicione mais estilos conforme necessário */

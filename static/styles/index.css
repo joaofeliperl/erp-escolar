@@ -1,0 +1,16 @@
+/* index.css */
+
+/* Adicione as regras necessárias para centralizar os botões ou outras propriedades */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* Isso garante que o conteúdo fique no centro da tela */
+}
+
+/* Remova o conjunto de regras vazias para body e h1 */
+button {
+    margin-top: 10px; /* Adapte conforme necessário */
+    /* Outros estilos para o botão, se necessário */
+}

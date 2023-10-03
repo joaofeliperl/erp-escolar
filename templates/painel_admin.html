@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/painel_admin.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="font-sans bg-gray-100">
+
+<nav class="bg-gray-800 p-4">
+    <a href="{{ url_for('main_routes.adicionar_usuario') }}" class="text-white hover:bg-gray-600 px-4 py-2 rounded">Usuários</a>
+    <a href="{{ url_for('main_routes.cadastrar_empresa') }}" class="text-white hover:bg-gray-600 px-4 py-2 rounded">Cadastrar Empresa</a>
+</nav>
+
+<!-- Exibir mensagens de erro ou sucesso -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="messages">
+      {% for message, category in messages %}
+        <li class="message {{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<br><br><br>
+
+<a href="{{ url_for('main_routes.adicionar_usuario') }}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4">Adicionar Usuário</a>
+
+<!-- Tabela para exibir os clientes -->
+<div class="overflow-x-auto mx-4 mt-4">
+    <table class="table-fixed w-full bg-white">
+        <thead>
+            <tr>
+                <th class="border px-4 py-2">CPF</th>
+                <th class="border px-4 py-2">Nome Completo</th>
+                <th class="border px-4 py-2">Empresa</th>
+                <th class="border px-4 py-2">Funções</th>
+                <th class="border px-4 py-2">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+                <tr>
+                    <td class="border px-4 py-2">{{ cliente.cpf }}</td>
+                    <td class="border px-4 py-2">{{ cliente.nome_completo }}</td>
+                    <td class="border px-4 py-2">{{ cliente.empresa if cliente.empresa else 'Sem Empresa' }}</td>
+                    <td class="border px-4 py-2">{{ cliente.funcoes }}</td>
+                    <td class="border px-4 py-2">
+                        <button class="bg-yellow-500 text-white px-2 py-1 rounded">Bloquear</button>
+                        <form method="post" action="{{ url_for('main_routes.deletar_usuario', cpf=cliente.cpf) }}" style="display: inline;">
+                            <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded">Deletar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
