@@ -24,16 +24,4 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const passwordInput = document.getElementById('password');
-    const showPasswordToggle = document.getElementById('showPasswordToggle');
-
-    showPasswordToggle.addEventListener('click', function () {
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-        } else {
-            passwordInput.type = 'password';
-        }
-    });
-});
 

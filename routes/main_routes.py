@@ -1,7 +1,9 @@
-from flask import Blueprint, flash, jsonify, render_template, redirect, url_for, request
+from flask import Blueprint, abort, current_app, flash, jsonify, render_template, redirect, url_for, request
 from db import mysql  # Importe a instância do MySQL
 from flask import jsonify
 import MySQLdb
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 main_routes = Blueprint('main_routes', __name__)
 
@@ -25,6 +27,7 @@ def admin_login():
         cur.close()
 
         if user:
+            # Ajuste a rota de redirecionamento para 'main_routes.painel_admin'
             return redirect(url_for('main_routes.painel_admin'))
         else:
             return redirect(url_for('main_routes.unauthorized'))
@@ -74,9 +77,6 @@ def painel_admin():
         print(f"Erro ao obter dados da tabela clientes: {str(e)}")
         # Trate o erro conforme necessário, por exemplo, exibindo uma página de erro
         return render_template('erro.html', mensagem="Erro ao obter dados da tabela clientes")
-
-
-
 
 @main_routes.route('/colaboradores')
 def colaboradores():
@@ -162,14 +162,30 @@ def adicionar_usuario():
     return render_template('adicionar_usuario.html')
 
 
-@main_routes.route('/deletar_usuario/<cpf>', methods=['POST'])
-def deletar_usuario(cpf):
-    try:
-        # Adicione o código para deletar o usuário do banco de dados usando o CPF
-        # ...
-        
-        flash('Usuário deletado com sucesso', 'success')
-    except Exception as e:
-        flash(f'Erro ao deletar usuário: {str(e)}', 'error')
 
-    return redirect(url_for('main_routes.painel_admin'))
+@main_routes.route('/deletar_usuario/<cpf>', methods=['POST'])
+def delete_usuario(cpf):
+    if request.method == 'POST':
+        try:
+            with mysql.connection.cursor() as cursor:
+                cursor.execute("DELETE FROM clientes WHERE cpf=%s", (cpf,))
+                mysql.connection.commit()
+            flash("Usuário excluído com sucesso")
+        except Exception as e:
+            flash("Não foi possível excluir o usuário")
+        return redirect(url_for('main_routes.painel_admin'))
+    else:
+        return redirect(url_for('main_routes.painel_admin'))
+
+@main_routes.route('/permissao/<cpf>')
+def permissao_individual(cpf):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM clientes WHERE cpf=%s", (cpf,))
+    user = cursor.fetchone()
+    cursor.close()
+
+    if user:
+        return render_template('permissao.html', user=user)
+    else:
+        abort(404)
+
