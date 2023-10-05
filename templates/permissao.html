@@ -6,90 +6,149 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Permissões</title>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/permissao.js') }}"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="font-sans antialiased bg-gray-100 dark:bg-gray-800 p-8">
-    <div class="flex">
-        <div x-data="{ showSidebar: false }" class="fixed top-0 left-0 z-50 p-4">
-            <!-- Botão para abrir a barra lateral -->
-            <button @click="showSidebar = true" class="text-purple-600 hover:text-purple-300 focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
-                    </path>
-                </svg>
-            </button>
+<body class="font-sans">
 
-            <!-- Sobreposição escura -->
-            <div x-show="showSidebar" @click="showSidebar = false" class="fixed inset-0 bg-black opacity-50 z-30"
-                style="display: none;"></div>
+    <nav class="border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+        <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <a href="#" class="flex items-center">
+              <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 mr-3" alt="Flowbite Logo" />
+              <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+          </a>
+          <button data-collapse-toggle="navbar-solid-bg" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-solid-bg" aria-expanded="false">
+              <span class="sr-only">Open main menu</span>
+              <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
+              </svg>
+          </button>
+          <div class="hidden w-full md:block md:w-auto" id="navbar-solid-bg">
+            <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
+              <li>
+                <a href="{{ url_for('main_routes.painel_admin') }}" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent" aria-current="page">Usuários</a>
+              </li>
+              <li>
+                <a href="{{ url_for('main_routes.cadastrar_empresa') }}" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Empresas</a>
+              </li>
+              <li>
+                <a href="#" class="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Sair</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
 
-            <!-- drawer component -->
-            <div x-show="showSidebar" id="drawer-navigation"
-                class="fixed top-0 left-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-white dark:bg-gray-800"
-                tabindex="-1" aria-labelledby="drawer-navigation-label" @click.away="showSidebar = false"
-                @keydown.escape="showSidebar = false">
-                <!-- Conteúdo da barra lateral -->
+<div class="w-full max-w-md mx-auto mt-8">
+    <form method="POST" action="{{ url_for('main_routes.permissao_individual', cpf=user.cpf) }}">
 
-                <h5 id="drawer-navigation-label"
-                    class="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">
-                    Menu</h5>
-
-                <!-- Botão para fechar a barra lateral -->
-                <button @click="showSidebar = false"
-                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white">
-                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                    <span class="sr-only">Close menu</span>
-                </button>
-
-                <div class="py-4 overflow-y-auto">
-                    <!-- Seu menu e itens da barra lateral aqui -->
-                    <ul class="space-y-2 font-medium">
-                        <li>
-                            <a href="{{ url_for('main_routes.painel_admin') }}"
-                                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                    viewBox="0 0 20 18">
-                                    <path
-                                        d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-                                </svg>
-                                <span class="flex-1 ml-3 whitespace-nowrap">Usuários</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('main_routes.cadastrar_empresa') }}"
-                                class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-                                <svg class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                                    aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 7H13V11H16V13H13V17H11V13H8V11H11V7z" />
-                                </svg>
-                                <span class="flex-1 ml-3 whitespace-nowrap">Cadastrar empresas</span>
-                            </a>
-                        </li>
-                        <!-- Adicione mais itens conforme necessário -->
-                </div>
-                </ul>
+        <!-- Seção: Informações Pessoais -->
+        <div x-show="openSection === 'informacoes_pessoais'"
+            class="bg-white dark:bg-gray-800 shadow-md rounded-md p-6 mb-6 mx-auto">
+            <label class="text-xl font-bold mb-2 block text-center">Informações Pessoais</label>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold">CPF:</label>
+                <input type="text" id="cpf" value="{{ user.cpf }}" readonly
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="cpf">
             </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold">Nome Completo:</label>
+                <input type="text" value="{{ user.nome_completo }}"
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="nome_completo">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold">Contato:</label>
+                <input type="text" id="contato" value="{{ user.contato }}"
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="contato" >
+            </div>
+            <label class="text-xl font-bold mb-2 block text-center">Endereço:</label>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold">CEP:</label>
+                <input type="text" id="cep" value="{{ user.cep }}"
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="cep" >
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold">Bairro:</label>
+                <input type="text" value="{{ user.bairro }}"
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="bairro">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold">Rua:</label>
+                <input type="text" value="{{ user.rua }}"
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="rua">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold font-bold">Número:</label>
+                <input type="text" value="{{ user.numero }}"
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="numero">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 dark:text-gray-400 font-bold">Complemento:</label>
+                <input type="text" value="{{ user.complemento }}"
+                    class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
+                    style="max-width: 500px;" name="complemento">
+            </div>
+            <label class="text-xl font-bold mb-2 block text-center">Informações da Empresa</label>
+            <div class="mb-4">
+                <select class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light" id="empresa" name="empresa" required>
+                    {% for empresa_option in empresas %}
+                        <option value="{{ empresa_option.nome }}" {% if user.empresa == empresa_option.nome %}selected{% endif %}>{{ empresa_option.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">Salvar</button>
         </div>
 
-        <h1 class="text-3xl font-semibold text-gray-900 dark:text-white mb-6 text-center">Detalhes do Usuário</h1>
-    
-        <div class="bg-white dark:bg-gray-800 shadow-md rounded-md p-6 mb-6 mx-auto my-auto">
-            <p class="mb-2"><strong class="text-gray-700 dark:text-gray-400">CPF:</strong> {{ user.cpf }}</p>
-            <p class="mb-2"><strong class="text-gray-700 dark:text-gray-400">Nome Completo:</strong> {{ user.nome_completo }}</p>
-            <!-- Adicione mais campos conforme necessário -->
-        </div>
-    <!-- Adicione formulários ou ações adicionais conforme necessário -->
 
+        <div x-show="openSection === 'informacoes_pessoais'"
+            class="bg-white dark:bg-gray-800 shadow-md rounded-md p-6 mb-6 mx-auto">
+            <label for="funcoes" class="text-xl font-bold mb-2 block text-center">Selecione as permissões para o usuário:</label>
+            <form method="POST" action="{{ url_for('main_routes.permissao_individual', cpf=user.cpf) }}">
+                <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">Permissões Individuais</h3>
+                <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                        <div class="flex items-center pl-3">
+                            <input id="matricula" type="checkbox" name="matricula" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" value="1" {{ 'checked' if permissoes and permissoes['matricula'] else '' }}>
+                            <label for="matricula" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Matrícula</label>
+                        </div>
+                    </li>
+                    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                        <div class="flex items-center pl-3">
+                            <input id="cadastro" type="checkbox" name="cadastro" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" value="1" {{ 'checked' if permissoes and permissoes['cadastro'] else '' }}>
+                            <label for="cadastro" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Cadastro</label>
+                        </div>
+                    </li>
+                    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                        <div class="flex items-center pl-3">
+                            <input id="secretaria" type="checkbox" name="secretaria" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" value="1" {{ 'checked' if permissoes and permissoes['secretaria'] else '' }}>
+                            <label for="secretaria" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Secretaria</label>
+                        </div>
+                    </li>
+                    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                        <div class="flex items-center pl-3">
+                            <input id="financeiro" type="checkbox" name="financeiro" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" value="1" {{ 'checked' if permissoes and permissoes['financeiro'] else '' }}>
+                            <label for="financeiro" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Financeiro</label>
+                        </div>
+                    </li>
+                </ul>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">Salvar</button>
+            </form>
+            
+        </div>
+
+
+    </form>
+</div>
 </body>
 
 </html>

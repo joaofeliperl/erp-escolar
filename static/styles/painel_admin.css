@@ -48,7 +48,7 @@
 .table td:last-child,
 .table th:last-child {
     padding: 8px;
-    width: 200px; /* Ajuste conforme necessário */
+    width: 250px; /* Ajuste conforme necessário */
 }
 
 .btn-yellow {

@@ -40,9 +40,5 @@ function formatarContato(input) {
 }
 
 
-function validarNumero(input) {
-    // Remover caracteres não numéricos usando expressão regular
-    input.value = input.value.replace(/\D/g, '');
-}
 
 

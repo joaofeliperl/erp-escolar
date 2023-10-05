@@ -37,3 +37,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+window.Alpine = {
+    start: function () {
+        return {
+            open: false,
+        }
+    }
+}

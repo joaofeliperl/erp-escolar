@@ -41,7 +41,18 @@ function formatarContato(input) {
     // Atualiza o valor no campo de input
     input.value = rawValue;
 }
-function validarNumero(input) {
-    // Remover caracteres não numéricos usando expressão regular
-    input.value = input.value.replace(/\D/g, '');
-}
+
+
+// Obter referências aos elementos HTML
+const empresaLabel = document.getElementById('empresaLabel');
+const tooltipEmpresa = document.getElementById('tooltipEmpresa');
+
+// Adicionar um evento de mouseover para mostrar o tooltip
+empresaLabel.addEventListener('mouseover', () => {
+    tooltipEmpresa.style.display = 'inline';
+});
+
+// Adicionar um evento de mouseout para esconder o tooltip
+empresaLabel.addEventListener('mouseout', () => {
+    tooltipEmpresa.style.display = 'none';
+});
