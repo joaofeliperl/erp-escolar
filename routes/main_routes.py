@@ -1,6 +1,7 @@
-from flask import Blueprint, abort, current_app, flash, jsonify, render_template, redirect, url_for, request
+import datetime
+from flask import Blueprint, abort, app, flash, jsonify, render_template, redirect, request, current_app, session, url_for  # Removida a importação desnecessária de 'app' e 'url_for'
+import jwt
 from db import mysql  # Importe a instância do MySQL
-from flask import jsonify
 import MySQLdb
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -35,6 +36,9 @@ def admin_login():
     return render_template('login_admin.html')
 
 
+
+
+# Função para obter dados da tabela clientes
 def obter_dados_da_tabela_clientes(conexao):
     try:
         # Cria um cursor a partir da conexão
@@ -58,6 +62,7 @@ def obter_dados_da_tabela_clientes(conexao):
         raise
 
 
+
 @main_routes.route('/painel_admin')
 def painel_admin():
     try:
@@ -78,11 +83,167 @@ def painel_admin():
         return render_template('erro.html', mensagem="Erro ao obter dados da tabela clientes")
 
 
-@main_routes.route('/colaboradores')
-def colaboradores():
-    # Lógica para a rota colaboradores, se aplicável
-    pass
 
+
+@main_routes.route('/primeiro_acesso', methods=['GET', 'POST'])
+def primeiro_acesso():
+    if request.method == 'POST':
+        # Obtém o nome de usuário do formulário
+        username = request.form.get('username')
+
+        # Consulta ao banco de dados para verificar se o usuário já existe
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT usuario_cliente, senha_cliente FROM login_cliente WHERE usuario_cliente = %s", (username,))
+        usuario = cur.fetchone()
+        cur.close()
+
+        if usuario:
+            # Verifica se o usuário já tem senha cadastrada
+            if usuario['senha_cliente']:
+                flash('Usuário já cadastrado', 'error')
+            else:
+                # Armazena o nome de usuário na sessão
+                session['current_user'] = username
+
+                # Usuário existe, mas ainda não tem senha cadastrada, redireciona para a página de cadastro de senha
+                flash('Redirecionando para o cadastro de senha', 'success')
+                # Redirecionamento para a rota cadastro_senha
+                return redirect(url_for('main_routes.cadastro_senha'))
+
+        else:
+            # Usuário não encontrado, pode lidar com isso conforme necessário
+            flash('Usuário não encontrado', 'error')
+
+    return render_template('primeiro_acesso.html')
+
+
+
+@main_routes.route('/cadastro_senha', methods=['GET', 'POST'])
+def cadastro_senha():
+    if request.method == 'POST':
+        # Obtém a senha do formulário
+        senha = request.form.get('password')
+
+        # Obtém o nome de usuário armazenado na sessão
+        username = session.get('current_user')
+
+        try:
+            # Conecta ao banco de dados
+            cur = mysql.connection.cursor()
+
+            # Atualiza o banco de dados com a senha associada ao usuário
+            cur.execute("UPDATE login_cliente SET senha_cliente = %s WHERE usuario_cliente = %s", (senha, username))
+
+            # Commit da transação
+            mysql.connection.commit()
+
+            # Limpa a sessão após cadastrar a senha
+            session.pop('current_user', None)
+
+            flash('Senha cadastrada com sucesso', 'success')
+            return redirect(url_for('main_routes.colaboradores'))
+
+        except Exception as e:
+            # Lidar com erros durante a inserção no banco de dados
+            flash(f'Erro ao cadastrar a senha: {str(e)}', 'error')
+
+        finally:
+            # Certifique-se de fechar o cursor
+            cur.close()
+
+    return render_template('cadastro_senha.html')
+
+
+# Função para verificar se o usuário está autenticado
+def is_authenticated():
+    return 'username' in session
+
+
+
+# Rota para a página de login do colaborador no blueprint 'main_routes'
+@main_routes.route('/login_colaborador')
+def tela_login_colaborador():
+    return render_template('login_colaborador.html')
+
+# Rota para processar o formulário de login do colaborador no blueprint 'main_routes'
+@main_routes.route('/autenticacao_cliente', methods=['POST'])
+def submit_login_colaborador():
+    error = None
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        cur = mysql.connection.cursor()
+
+        cur.execute("SELECT * FROM login_cliente WHERE usuario_cliente = %s", (username,))
+        user = cur.fetchone()
+
+        if user:
+            if password == user['senha_cliente']:
+                cur.execute("SELECT matricula, cadastro, secretaria, financeiro, professor FROM permissao WHERE cpf_cliente = %s", (user['cpf_cliente'],))
+                permissions = cur.fetchone()
+
+                if permissions:
+                    token_payload = {
+                        'username': user['usuario_cliente'],
+                        'cpf': user['cpf_cliente'],
+                        'matricula': permissions['matricula'],
+                        'cadastro': permissions['cadastro'],
+                        'secretaria': permissions['secretaria'],
+                        'financeiro': permissions['financeiro'],
+                        'professor': permissions['professor'],
+                        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                    }
+
+                    token = jwt.encode(token_payload, current_app.config['SECRET_KEY'], algorithm='HS256')
+                    # Redireciona para a rota de índice do colaborador no blueprint 'main_routes' com o token como parâmetro
+                    return redirect(url_for('main_routes.index_colaborador_blueprint', token=token))
+                else:
+                    error = 'Permissões não encontradas para o usuário'
+            else:
+                error = 'Senha incorreta'
+        else:
+            error = 'Usuário não encontrado'
+
+        cur.close()
+
+    # Redireciona para a rota de índice do colaborador no blueprint 'main_routes' com o erro como parâmetro
+    return redirect(url_for('main_routes.index_colaborador_blueprint', error=error))
+
+
+
+def is_token_valid(token):
+    try:
+        jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        return True
+    except jwt.ExpiredSignatureError:
+        return False
+    except jwt.InvalidTokenError:
+        return False
+
+    
+@main_routes.route('/index_colaborador', endpoint='index_colaborador_blueprint')
+def index_colaborador():
+    token = request.args.get('token')
+
+    if token and is_token_valid(token):
+        # Adquira as permissões do token
+        token_payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+        permissions = {
+            'matricula': token_payload.get('matricula', False),
+            'cadastro': token_payload.get('cadastro', False),
+            'secretaria': token_payload.get('secretaria', False),
+            'financeiro': token_payload.get('financeiro', False),
+            'professor': token_payload.get('professor', False),
+        }
+
+        return render_template('index_colaborador.html', permissions=permissions)
+    else:
+        # Redireciona para a rota no blueprint
+        return redirect(url_for('main_routes.login_colaborador'))
+
+    
 @main_routes.route('/unauthorized')
 def unauthorized():
     return render_template ('unauthorized.html')
@@ -165,17 +326,35 @@ def adicionar_usuario():
 
 @main_routes.route('/deletar_usuario/<cpf>', methods=['POST'])
 def delete_usuario(cpf):
-    if request.method == 'POST':
-        try:
-            with mysql.connection.cursor() as cursor:
-                cursor.execute("DELETE FROM clientes WHERE cpf=%s", (cpf,))
-                mysql.connection.commit()
-            flash("Usuário excluído com sucesso")
-        except Exception as e:
-            flash("Não foi possível excluir o usuário")
-        return redirect(url_for('main_routes.painel_admin'))
-    else:
-        return redirect(url_for('main_routes.painel_admin'))
+    try:
+        # Obtém a conexão do MySQL a partir do aplicativo Flask
+        conexao = mysql.connection
+
+        # Cria um cursor a partir da conexão
+        cursor = conexao.cursor()
+
+        # Deleta registros relacionados na tabela login_cliente
+        cursor.execute("DELETE FROM login_cliente WHERE cpf_cliente=%s", (cpf,))
+        # Deleta o usuário
+        cursor.execute("DELETE FROM clientes WHERE cpf=%s", (cpf,))
+        mysql.connection.commit()
+
+        # Chama a função para obter dados da tabela clientes
+        clientes = obter_dados_da_tabela_clientes(conexao)
+
+        print(f"Clientes recebidos: {clientes}")
+
+        # Renderiza a página HTML com os dados obtidos
+        return render_template('painel_admin.html', clientes=clientes)
+
+    except Exception as e:
+        print(f"Erro ao deletar usuário: {str(e)}")
+        # Trate o erro conforme necessário, por exemplo, exibindo uma página de erro
+        return render_template('erro.html', mensagem="Erro ao deletar usuário")
+
+
+
+
 
 @main_routes.route('/permissao/<cpf>', methods=['GET', 'POST'])
 def permissao_individual(cpf):
@@ -226,6 +405,7 @@ def permissao_individual(cpf):
                 matricula = request.form.get('matricula') == '1'
                 cadastro = request.form.get('cadastro') == '1'
                 secretaria = request.form.get('secretaria') == '1'
+                professor = request.form.get('professor') == '1'
                 financeiro = request.form.get('financeiro') == '1'
 
                 # Verificar se as permissões existem
@@ -235,14 +415,14 @@ def permissao_individual(cpf):
                 if permissoes:
                     # Atualizar as permissões na tabela de permissao
                     cursor.execute(
-                        "UPDATE permissao SET matricula=%s, cadastro=%s, secretaria=%s, financeiro=%s WHERE cpf_cliente=%s",
-                        (matricula, cadastro, secretaria, financeiro, cpf)
+                        "UPDATE permissao SET matricula=%s, cadastro=%s, secretaria=%s, professor=%s, financeiro=%s WHERE cpf_cliente=%s",
+                        (matricula, cadastro, secretaria, professor, financeiro, cpf)
                     )
                 else:
                     # Se não houver permissões, crie um novo registro
                     cursor.execute(
-                        "INSERT INTO permissao (matricula, cadastro, secretaria, financeiro, cpf_cliente) VALUES (%s, %s, %s, %s, %s)",
-                        (matricula, cadastro, secretaria, financeiro, cpf)
+                        "INSERT INTO permissao (matricula, cadastro, secretaria, professor, financeiro, cpf_cliente) VALUES (%s, %s, %s, %s, %s,%s)",
+                        (matricula, cadastro, secretaria, professor,financeiro, cpf)
                     )
 
                 mysql.connection.commit()
@@ -274,11 +454,21 @@ def permissao_individual(cpf):
 
 @main_routes.route('/empresas_cadastradas')
 def visualizar_empresas():
-    # Aqui você pode adicionar a lógica necessária para obter dados sobre as empresas, se necessário
-    # Por exemplo, pode fazer consultas no banco de dados para obter informações sobre as empresas
+    # Criar um cursor para executar consultas SQL
+    cursor = mysql.connection.cursor()
 
-    # Renderiza a página 'empresas_cadastradas.html'
-    return render_template('empresas_cadastradas.html')
+    # Executar uma consulta para obter todas as empresas
+    cursor.execute('SELECT * FROM empresa')
+
+    # Obter os resultados da consulta
+    empresas = cursor.fetchall()
+
+    # Fechar o cursor após a consulta
+    cursor.close()
+
+    # Renderiza a página 'empresas_cadastradas.html' e passa as empresas como argumento
+    return render_template('empresas_cadastradas.html', empresas=empresas)
+
 
 @main_routes.route('/usuario_cadastrado')
 def usuario_cadastrado():
@@ -361,13 +551,10 @@ def criacao_login(cpf_cliente):
 @main_routes.route('/bloquear_cliente/<cpf>', methods=['POST'])
 def bloquear_cliente(cpf):
     try:
-        # Lógica para deletar o atributo senha_cliente do cliente com o CPF fornecido
+        # Lógica para bloquear o cliente com o CPF fornecido
         cursor = mysql.connection.cursor()
 
-        # Defina a senha_cliente como NULL (ou remova o atributo completamente)
-        # Substitua 'SUA_TABELA' pelo nome real da tabela no seu banco de dados
-        # Substitua 'SUA_COLUNA' pelo nome real da coluna que armazena a senha
-        sql_query = f"UPDATE login_cliente SET senha_cliente = NULL WHERE cpf_cliente = '{cpf}'"
+        sql_query = f"UPDATE login_cliente SET senha_cliente = NULL, status = 'bloqueado' WHERE cpf_cliente = '{cpf}'"
         cursor.execute(sql_query)
 
         # Commit da transação
@@ -380,6 +567,22 @@ def bloquear_cliente(cpf):
         return redirect(url_for('main_routes.painel_admin'))
 
     except Exception as e:
-        print(f"Erro ao bloquear cliente: {str(e)}")
-        # Trate o erro conforme necessário
-        return render_template('erro.html', mensagem="Erro ao bloquear cliente")
+        # Lide com exceções, por exemplo, exibindo uma mensagem de erro
+        flash(f'Erro ao bloquear cliente: {str(e)}', 'error')
+        return redirect(url_for('main_routes.painel_admin'))
+
+    
+
+@main_routes.route('/verificar_login/<cpf_cliente>')
+def verificar_login(cpf_cliente):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM login_cliente WHERE cpf_cliente=%s", (cpf_cliente,))
+    existing_user = cursor.fetchone()
+    return jsonify({'usuarioAtivado': existing_user is not None})
+
+
+
+
+
+
+

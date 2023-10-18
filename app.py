@@ -1,7 +1,8 @@
-from flask import Flask
+import datetime
+from flask import Flask, render_template, request, redirect, url_for, Blueprint
 from flask_mysqldb import MySQL
+import jwt
 from routes.main_routes import main_routes
-from db import mysql  # Importe a instância do MySQL
 
 app = Flask(__name__)
 
@@ -13,8 +14,9 @@ app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'erp_escolar'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
-# Configure a instância do MySQL no app
-mysql.init_app(app)
+mysql = MySQL(app)
+
+
 
 # Registra as rotas principais
 app.register_blueprint(main_routes)

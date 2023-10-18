@@ -1,0 +1,71 @@
+/* Estilo para o botão de fechar o sidebar */
+.close-button {
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 1.5em;
+    color: white;
+}
+
+/* Estilo para o overlay do sidebar */
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(206, 7, 7, 0.5);
+    z-index: 999;
+}
+
+/* Estilo para o sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px; /* Inicia fora da tela */
+    width: 300px;
+    height: 100%;
+    background-color: #1e1e1e; /* Ajuste conforme o seu design */
+    transition: left 0.3s; /* Adiciona transição para a animação */
+    visibility: hidden; /* Inicia oculto por padrão */
+    opacity: 0;
+}
+
+/* Estilo para mostrar o sidebar */
+.sidebar.visible {
+    left: 0;
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Estilo para o conteúdo principal */
+#content {
+    transition: margin-left 0.3s; /* Adiciona transição apenas para o conteúdo */
+}
+
+/* Estilo para mover o conteúdo ao abrir o sidebar */
+body.sidebar-open #content {
+    margin-left: 300px;
+}
+
+/* Estilo para o corpo da página */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden; /* Evita a rolagem horizontal ao abrir o sidebar */
+}
+
+/* Estilo para o botão de abrir o sidebar */
+#openSidebarButton {
+    z-index: 21; /* Certifique-se de que o ícone está acima do navbar */
+}
+
+/* Estilo para o sidebar */
+#sidebar {
+    z-index: 1000; /* ou qualquer valor maior que o z-index do seu navbar */
+}

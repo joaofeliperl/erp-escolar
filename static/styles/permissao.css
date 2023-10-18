@@ -1,0 +1,36 @@
+/* Estilos do toggle */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-checkbox {
+    display: none; /* Oculta o checkbox padrão */
+}
+
+.toggle-slider {
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    margin: 0 10px;
+    position: relative;
+}
+
+.toggle-slider::after {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(2px, -50%);
+    transition: transform 0.3s;
+}
+
+/* Estilo quando o checkbox está marcado */
+.toggle-checkbox:checked + .toggle-slider::after {
+    transform: translate(20px, -50%);
+}

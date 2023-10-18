@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolar</title>
+    <!-- Adicione o link para a biblioteca FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-200">
+
+    <nav class="bg-white border-b border-gray-200 shadow p-4">
+        <div class="container mx-auto flex justify-between items-center text-gray-800">
+            <a href="#" class="font-bold text-xl">Logo</a>
+
+            <div class="space-x-6 flex items-center">
+                <a href="#" class="text-gray-700 hover:text-blue-500 flex items-center"><i class="fas fa-home mr-1"></i> Home</a>
+
+                <a href="#" class="text-gray-700 hover:text-blue-500 flex items-center"><i class="far fa-calendar-alt mr-1"></i> Calendário</a>
+
+                {% if permissions.matricula %}
+                    <!-- Dropdown Matrícula -->
+                    <div class="relative inline-block text-left">
+                        <button id="matriculaDropdown" class="flex items-center text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-graduation-cap mr-1"></i> Matrícula <i id="matriculaIcon" class="fas fa-caret-down ml-2"></i>
+                        </button>
+                        <div id="matriculaDropdownContent" class="hidden absolute z-50 mt-2 w-40 bg-white border rounded shadow-md">
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-plus-circle mr-2"></i>Nova Matrícula</a>
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-info-circle mr-2"></i>Status</a>
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-history mr-2"></i>Histórico</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if permissions.cadastro %}
+                    <!-- Dropdown Cadastro -->
+                    <div class="relative inline-block text-left">
+                        <button id="cadastroDropdown" class="flex items-center text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-user-edit mr-1"></i> Funcionários <i id="cadastroIcon" class="fas fa-caret-down ml-2"></i>
+                        </button>
+                        <div id="cadastroDropdownContent" class="hidden absolute z-50 mt-2 w-40 bg-white border rounded shadow-md">
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-user-plus mr-2"></i>Novo Cadastro</a>
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-user-edit mr-2"></i>Editar Cadastro</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if permissions.secretaria %}
+                    <!-- Dropdown Secretaria -->
+                    <div class="relative inline-block text-left">
+                        <button id="secretariaDropdown" class="flex items-center text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-building mr-1"></i> Secretaria <i id="secretariaIcon" class="fas fa-caret-down ml-2"></i>
+                        </button>
+                        <div id="secretariaDropdownContent" class="hidden absolute z-50 mt-2 w-40 bg-white border rounded shadow-md">
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="far fa-calendar-alt mr-2"></i>Agenda</a>
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-headset mr-2"></i>Atendimento</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if permissions.financeiro %}
+                    <!-- Dropdown Financeiro -->
+                    <div class="relative inline-block text-left">
+                        <button id="financeiroDropdown" class="flex items-center text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-chart-pie mr-1"></i> Financeiro <i id="financeiroIcon" class="fas fa-caret-down ml-2"></i>
+                        </button>
+                        <div id="financeiroDropdownContent" class="hidden absolute z-50 mt-2 w-40 bg-white border rounded shadow-md">
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-money-check mr-2"></i>Pagamentos</a>
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-chart-pie mr-2"></i>Relatórios</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if permissions.professor %}
+                    <!-- Dropdown Professor -->
+                    <div class="relative inline-block text-left">
+                        <button id="professorDropdown" class="flex items-center text-gray-700 hover:text-blue-500 focus:outline-none">
+                            <i class="fas fa-chalkboard-teacher mr-1"></i> Professor <i id="professorIcon" class="fas fa-caret-down ml-2"></i>
+                        </button>
+                        <div id="professorDropdownContent" class="hidden absolute z-50 mt-2 w-40 bg-white border rounded shadow-md">
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-file-alt mr-2"></i> Notas</a>
+                            <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100"><i class="fas fa-list-ol mr-2"></i> Frequência</a>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Ícone de Foto -->
+                <div class="relative inline-block text-left">
+                    <!-- ... (seu código para Ícone de Foto) -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-8">
+        <h1 class="text-2xl font-bold mb-4">Olá cliente</h1>
+        <!-- Conteúdo da página -->
+    </div>
+
+    <script>
+        // Função para toggle do dropdown
+        function toggleDropdown(dropdownId, iconId) {
+            var dropdownContent = document.getElementById(dropdownId);
+            var dropdownIcon = document.getElementById(iconId);
+
+            dropdownContent.classList.toggle('hidden');
+            dropdownIcon.classList.toggle('fa-caret-down');
+            dropdownIcon.classList.toggle('fa-caret-up');
+        }
+
+        // Adicionando comportamento de dropdown aos elementos desejados
+        document.getElementById('matriculaDropdown').addEventListener('click', function () {
+            toggleDropdown('matriculaDropdownContent', 'matriculaIcon');
+        });
+
+        document.getElementById('cadastroDropdown').addEventListener('click', function () {
+            toggleDropdown('cadastroDropdownContent', 'cadastroIcon');
+        });
+
+        document.getElementById('secretariaDropdown').addEventListener('click', function () {
+            toggleDropdown('secretariaDropdownContent', 'secretariaIcon');
+        });
+
+        document.getElementById('financeiroDropdown').addEventListener('click', function () {
+            toggleDropdown('financeiroDropdownContent', 'financeiroIcon');
+        });
+
+        // Adicionando comportamento de dropdown para o Professor
+        document.getElementById('professorDropdown').addEventListener('click', function () {
+            toggleDropdown('professorDropdownContent', 'professorIcon');
+        });
+    </script>
+
+</body>
+</html>
