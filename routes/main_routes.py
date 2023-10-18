@@ -181,13 +181,15 @@ def submit_login_colaborador():
 
         if user:
             if password == user['senha_cliente']:
-                cur.execute("SELECT matricula, cadastro, secretaria, financeiro, professor FROM permissao WHERE cpf_cliente = %s", (user['cpf_cliente'],))
+                cur.execute("SELECT home, calendario, matricula, cadastro, secretaria, financeiro, professor FROM permissao WHERE cpf_cliente = %s", (user['cpf_cliente'],))
                 permissions = cur.fetchone()
 
                 if permissions:
                     token_payload = {
                         'username': user['usuario_cliente'],
                         'cpf': user['cpf_cliente'],
+                        'home': permissions['home'],
+                        'calendario': permissions['calendario'],
                         'matricula': permissions['matricula'],
                         'cadastro': permissions['cadastro'],
                         'secretaria': permissions['secretaria'],
@@ -231,6 +233,8 @@ def index_colaborador():
         # Adquira as permissões do token
         token_payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
         permissions = {
+            'home': token_payload.get('home', False),
+            'calendario': token_payload.get('calendario', False),
             'matricula': token_payload.get('matricula', False),
             'cadastro': token_payload.get('cadastro', False),
             'secretaria': token_payload.get('secretaria', False),
@@ -402,6 +406,8 @@ def permissao_individual(cpf):
                 mysql.connection.commit()
 
                 # Cadastro de permissões
+                home = request.form.get('home') == '1'
+                calendario = request.form.get('calendario') == '1'
                 matricula = request.form.get('matricula') == '1'
                 cadastro = request.form.get('cadastro') == '1'
                 secretaria = request.form.get('secretaria') == '1'
@@ -415,14 +421,14 @@ def permissao_individual(cpf):
                 if permissoes:
                     # Atualizar as permissões na tabela de permissao
                     cursor.execute(
-                        "UPDATE permissao SET matricula=%s, cadastro=%s, secretaria=%s, professor=%s, financeiro=%s WHERE cpf_cliente=%s",
-                        (matricula, cadastro, secretaria, professor, financeiro, cpf)
+                        "UPDATE permissao SET home=%s, calendario=%s,matricula=%s, cadastro=%s, secretaria=%s, professor=%s, financeiro=%s WHERE cpf_cliente=%s",
+                        (home, calendario, matricula, cadastro, secretaria, professor, financeiro, cpf)
                     )
                 else:
                     # Se não houver permissões, crie um novo registro
                     cursor.execute(
-                        "INSERT INTO permissao (matricula, cadastro, secretaria, professor, financeiro, cpf_cliente) VALUES (%s, %s, %s, %s, %s,%s)",
-                        (matricula, cadastro, secretaria, professor,financeiro, cpf)
+                        "INSERT INTO permissao (home, calendario matricula, cadastro, secretaria, professor, financeiro, cpf_cliente) VALUES (%s, %s, %s, %s, %s,%s, %s, %s)",
+                        (home, calendario, matricula, cadastro, secretaria, professor,financeiro, cpf)
                     )
 
                 mysql.connection.commit()

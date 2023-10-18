@@ -191,6 +191,20 @@
                 <ul>
                     <li>
                         <label class="toggle-container">
+                            <input id="home" type="checkbox" name="home" class="toggle-checkbox sr-only peer" value="1" {{ 'checked' if permissoes and permissoes['home'] else '' }}>
+                            <span class="toggle-slider"></span>
+                            Home
+                        </label>
+                    </li>
+                    <li>
+                        <label class="toggle-container">
+                            <input id="calendario" type="checkbox" name="calendario" class="toggle-checkbox sr-only peer" value="1" {{ 'checked' if permissoes and permissoes['calendario'] else '' }}>
+                            <span class="toggle-slider"></span>
+                            Calendário
+                        </label>
+                    </li>
+                    <li>
+                        <label class="toggle-container">
                             <input id="matricula" type="checkbox" name="matricula" class="toggle-checkbox sr-only peer" value="1" {{ 'checked' if permissoes and permissoes['matricula'] else '' }}>
                             <span class="toggle-slider"></span>
                             Matrícula
