@@ -174,22 +174,24 @@
             </div>
 
             <div class="mb-4">
-                <label for="cep" class="block text-gray-600 text-sm font-semibold mb-2">CEP: *</label>
+                <label for="cep" class="block text-gray-600 text-sm font-semibold mb-2">CEP: *
+                    <span class="tooltip" id="tooltipEmpresa">ℹ️<span class="tooltiptext">Digite seu CEP somente com números</span>
+                </label>
                 <input type="text" name="cep" id="cep"
                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-                    maxlength="9" required>
+                    maxlength="8" required>
             </div>
 
             <div class="mb-4">
                 <label for="rua" class="block text-gray-600 text-sm font-semibold mb-2">Rua: *</label>
-                <input type="text" name="rua" id="rua"
+                <input readonly type="text" name="rua" id="rua"
                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                     required>
             </div>
 
             <div class="mb-4">
                 <label for="bairro" class="block text-gray-600 text-sm font-semibold mb-2">Bairro: *</label>
-                <input type="text" name="bairro" id="bairro"
+                <input readonly type="text" name="bairro" id="bairro"
                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                     required>
             </div>
@@ -211,7 +213,7 @@
                 <label for="empresa" class="block text-gray-600 text-sm font-semibold mb-2" id="empresaLabel">
                     Empresa *
                     <span class="tooltip" id="tooltipEmpresa">ℹ️<span class="tooltiptext">Se sua empresa não aparecer na
-                            lista, faça o cadastro na tela cadastrar empresas</span></span>
+                            lista, faça o cadastro na tela cadastrar empresas</span>
                 </label>
                 <select
                     class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
@@ -241,5 +243,6 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
     <script src="{{ url_for('static', filename='js/adicionar_usuario.js') }}"></script>
     <script src="../static/js/components/sidebar.js"></script>
+    <script src="../static/js/components/filtro_cep.js"></script>
 
 </html>

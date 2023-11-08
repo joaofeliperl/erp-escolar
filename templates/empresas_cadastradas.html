@@ -1,180 +1,267 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en" class="antialiased">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="../static/styles/tailwind.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Empresas Cadastradas</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
+    <!-- Regular DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles/components/sidebar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" />
+    <!-- Responsive Extension Datatables CSS -->
+    <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/styles/tailwind.css">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <!-- Custom styles for this template -->
+    <style>
+		/*Overrides for Tailwind CSS */
+
+		/*Form fields*/
+		.dataTables_wrapper select,
+		.dataTables_wrapper .dataTables_filter input {
+			color: #4a5568;
+			/*text-gray-700*/
+			padding-left: 1rem;
+			/*pl-4*/
+			padding-right: 1rem;
+			/*pl-4*/
+			padding-top: .5rem;
+			/*pl-2*/
+			padding-bottom: .5rem;
+			/*pl-2*/
+			line-height: 1.25;
+			/*leading-tight*/
+			border-width: 2px;
+			/*border-2*/
+			border-radius: .25rem;
+			border-color: #edf2f7;
+			/*border-gray-200*/
+			background-color: #edf2f7;
+			/*bg-gray-200*/
+		}
+
+		/*Row Hover*/
+		table.dataTable.hover tbody tr:hover,
+		table.dataTable.display tbody tr:hover {
+			background-color: #ebf4ff;
+			/*bg-indigo-100*/
+		}
+
+		/*Pagination Buttons*/
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			font-weight: 700;
+			/*font-bold*/
+			border-radius: .25rem;
+			/*rounded*/
+			border: 1px solid transparent;
+			/*border border-transparent*/
+		}
+
+		/*Pagination Buttons - Current selected */
+		.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+			color: #fff !important;
+			/*text-white*/
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+			/*shadow*/
+			font-weight: 700;
+			/*font-bold*/
+			border-radius: .25rem;
+			/*rounded*/
+			background: #667eea !important;
+			/*bg-indigo-500*/
+			border: 1px solid transparent;
+			/*border border-transparent*/
+		}
+
+		/*Pagination Buttons - Hover */
+		.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+			color: #fff !important;
+			/*text-white*/
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+			/*shadow*/
+			font-weight: 700;
+			/*font-bold*/
+			border-radius: .25rem;
+			/*rounded*/
+			background: #667eea !important;
+			/*bg-indigo-500*/
+			border: 1px solid transparent;
+			/*border border-transparent*/
+		}
+
+		/*Add padding to bottom border */
+		table.dataTable.no-footer {
+			border-bottom: 1px solid #e2e8f0;
+			/*border-b-1 border-gray-300*/
+			margin-top: 0.75em;
+			margin-bottom: 0.75em;
+		}
+
+		/*Change colour of responsive icon*/
+		table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before,
+		table.dataTable.dtr-inline.collapsed>tbody>tr>th:first-child:before {
+			background-color: #667eea !important;
+			/*bg-indigo-500*/
+		}
+	</style>
 
 </head>
+<body class="bg-gray-100 text-gray-900 tracking-wider leading-normal">
 
-<body class="font-sans">
+    <!-- Inicio do sidebar -->
+ <span id="openSidebarButton" class="absolute text-white text-4xl top-5 left-4 cursor-pointer"
+ >
+ <i class="bi bi-list px-2 bg-gray-900 rounded-md"></i>
+</span>
 
-    <span id="openSidebarButton" class="absolute text-white text-4xl top-5 left-4 cursor-pointer"
-        >
-        <i class="bi bi-list px-2 bg-gray-900 rounded-md"></i>
-    </span>
+<div 
+id="sidebar"
+onclick="event.stopPropagation();"
+class="sidebar fixed top-0 bottom-0 lg:left-0 p-2 w-[300px] overflow-y-auto text-center bg-gray-900">
 
-    <div 
-    id="sidebar"
-    onclick="event.stopPropagation();"
-    class="sidebar fixed top-0 bottom-0 lg:left-0 p-2 w-[300px] overflow-y-auto text-center bg-gray-900">
+ <div class="text-gray-100 text-xl">
+     <div class="p-2.5 mt-1 flex items-center">
+         <i class="bi bi-app-indicator px-2 py-1 rounded-md bg-blue-600"></i>
+         <h1 class="font-bold text-gray-200 text-[15px] ml-3">Sistema</h1>
 
-        <div class="text-gray-100 text-xl">
-            <div class="p-2.5 mt-1 flex items-center">
-                <i class="bi bi-app-indicator px-2 py-1 rounded-md bg-blue-600"></i>
-                <h1 class="font-bold text-gray-200 text-[15px] ml-3">Sistema</h1>
+         <div class="my-2 bg-gray-600 h-[1px]"></div>
+     </div>
+     <button class="close-button ml-28 " onclick="toggleSidebar()">
+         &times;
+     </button>
 
-                <div class="my-2 bg-gray-600 h-[1px]"></div>
-            </div>
-            <button class="close-button ml-28 " onclick="toggleSidebar()">
-                &times;
-            </button>
+ </div>
+ <div class="p-2.5 flex items-center rounded-md px-4 duration-300 cursor-pointer bg-gray-700 text-white">
+     <i class="bi bi-search text-sm"></i>
+     <input id="searchInput" type="text" placeholder="Search"
+         class="text-[15px] ml-4 w-full bg-transparent focus:outline-none" />
+ </div>
+ <div id="optionsContainer">
+     <a href="{{ url_for('main_routes.painel_admin') }}">
+         <div
+             class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+             <i class="bi bi-house-door-fill"></i>
 
+             <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
+
+         </div>
+     </a>
+     <div class="my-4 bg-gray-600 h-[1px]"></div>
+     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+         onclick="dropdown_usuarios()">
+         <i class="bi bi-people"></i>
+         <div class="flex justify-between w-full items-center">
+             <span class="text-[15px] ml-4 text-gray-200 font-bold">Usuários</span>
+             <span class="text-sm rotate-180" id="arrow_usuarios">
+                 <i class="bi bi-chevron-down"></i>
+             </span>
+         </div>
+     </div>
+     
+     <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold" id="submenu_usuarios">
+         <a href="{{ url_for('main_routes.adicionar_usuario') }}">
+         <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
+             Cadastrar Usuário
+         </h1>
+         </a>
+         <a href="{{ url_for('main_routes.painel_admin') }}">
+         <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
+             Usuários Cadastrados
+         </h1>
+         </a>
+     </div>
+     <div class="my-4 bg-gray-600 h-[1px]"></div>
+     <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
+         onclick="dropdown_empresas()">
+         <i class="bi bi-building"></i>
+         <div class="flex justify-between w-full items-center">
+             <span class="text-[15px] ml-4 text-gray-200 font-bold">Empresas</span>
+             <span class="text-sm rotate-180" id="arrow_empresas">
+                 <i class="bi bi-chevron-down"></i>
+             </span>
+         </div>
+     </div>
+     <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold" id="submenu_empresas">
+         <a href="{{ url_for('main_routes.cadastrar_empresa') }}">
+         <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
+             Cadastrar Empresa
+         </h1>
+         </a>
+         <a href="{{ url_for('main_routes.visualizar_empresas') }}">
+         <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
+             Empresas Cadastradas
+         </h1>
+         </a>
+     </div>
+
+     <div
+         class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
+         <i class="bi bi-box-arrow-in-right"></i>
+         <span class="text-[15px] ml-4 text-gray-200 font-bold">Logout</span>
+     </div>
+ </div>
+</div>
+
+
+<!-- Fim do sidebar -->
+
+    <!-- Container -->
+    <div class="container w-full md:w-4/5 xl:w-3/5 mx-auto px-2">
+        <!-- Title -->
+        <h1 class="font-sans font-bold break-normal text-indigo-500 px-2 py-8 text-xl md:text-2xl">Empresas Cadastradas</h1>
+        <!-- Card -->
+        <div id='recipients' class="p-8 mt-6 lg:mt-0 rounded shadow bg-white">
+            <table id="example" class="stripe hover" style="width:100%; padding-top: 1em; padding-bottom: 1em;">
+                <thead>
+                    <tr>
+                        <th>CNPJ</th>
+                        <th>Nome</th>
+                        <th>Contato</th>
+                        <th>CEP</th>
+                        <th>Rua</th>
+                        <th>Bairro</th>
+                        <th>Número</th>
+                        <th>Complemento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for empresa in empresas %}
+                    <tr>
+                        <td>{{ empresa.cnpj }}</td>
+                        <td>{{ empresa.nome }}</td>
+                        <td>{{ empresa.contato }}</td>
+                        <td>{{ empresa.cep }}</td>
+                        <td>{{ empresa.rua }}</td>
+                        <td>{{ empresa.bairro }}</td>
+                        <td>{{ empresa.numero }}</td>
+                        <td>{{ empresa.complemento }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="p-2.5 flex items-center rounded-md px-4 duration-300 cursor-pointer bg-gray-700 text-white">
-            <i class="bi bi-search text-sm"></i>
-            <input id="searchInput" type="text" placeholder="Search"
-                class="text-[15px] ml-4 w-full bg-transparent focus:outline-none" />
-        </div>
-        <div id="optionsContainer">
-            <a href="{{ url_for('main_routes.painel_admin') }}">
-                <div
-                    class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                    <i class="bi bi-house-door-fill"></i>
-
-                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Home</span>
-
-                </div>
-            </a>
-            <div class="my-4 bg-gray-600 h-[1px]"></div>
-            <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
-                onclick="dropdown_usuarios()">
-                <i class="bi bi-people"></i>
-                <div class="flex justify-between w-full items-center">
-                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Usuários</span>
-                    <span class="text-sm rotate-180" id="arrow_usuarios">
-                        <i class="bi bi-chevron-down"></i>
-                    </span>
-                </div>
-            </div>
-            
-            <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold" id="submenu_usuarios">
-                <a href="{{ url_for('main_routes.adicionar_usuario') }}">
-                <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
-                    Cadastrar Usuário
-                </h1>
-                </a>
-                <a href="{{ url_for('main_routes.painel_admin') }}">
-                <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
-                    Usuários Cadastrados
-                </h1>
-                </a>
-            </div>
-            <div class="my-4 bg-gray-600 h-[1px]"></div>
-            <div class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white"
-                onclick="dropdown_empresas()">
-                <i class="bi bi-building"></i>
-                <div class="flex justify-between w-full items-center">
-                    <span class="text-[15px] ml-4 text-gray-200 font-bold">Empresas</span>
-                    <span class="text-sm rotate-180" id="arrow_empresas">
-                        <i class="bi bi-chevron-down"></i>
-                    </span>
-                </div>
-            </div>
-            <div class="text-left text-sm mt-2 w-4/5 mx-auto text-gray-200 font-bold" id="submenu_empresas">
-                <a href="{{ url_for('main_routes.cadastrar_empresa') }}">
-                <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
-                    Cadastrar Empresa
-                </h1>
-                </a>
-                <a href="{{ url_for('main_routes.visualizar_empresas') }}">
-                <h1 class="cursor-pointer p-2 hover:bg-blue-600 rounded-md mt-1">
-                    Empresas Cadastradas
-                </h1>
-                </a>
-            </div>
-
-            <div
-                class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 cursor-pointer hover:bg-blue-600 text-white">
-                <i class="bi bi-box-arrow-in-right"></i>
-                <span class="text-[15px] ml-4 text-gray-200 font-bold">Logout</span>
-            </div>
-        </div>
+        <!-- /Card -->
     </div>
+    <!-- /Container -->
 
-   
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                Empresas Cadastradas
-                <p class="mt-1 text-sm font-normal text-gray-500 dark:text-gray-400">Lista de empresas cadastradas</p>
-            </caption>
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        CNPJ
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Nome
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Contato
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        CEP
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Rua
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Bairro
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Número
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Complemento
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for empresa in empresas %}
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ empresa.cnpj }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ empresa.nome }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ empresa.contato }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ empresa.cep }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ empresa.rua }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ empresa.bairro }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ empresa.numero }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ empresa.complemento }}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    
-
-
-    <script src="../static/js/components/sidebar.js"></script>
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                responsive: true
+            }).columns.adjust().responsive.recalc();
+        });
+    </script>
+     <script src="../static/js/components/sidebar.js"></script>
 </body>
-
 </html>

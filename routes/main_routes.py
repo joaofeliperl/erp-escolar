@@ -35,7 +35,27 @@ def admin_login():
 
     return render_template('login_admin.html')
 
+@main_routes.route('/dados_clientes')
+def dados_clientes():
+    try:
+        conexao = mysql.connection
+        clientes = obter_dados_da_tabela_clientes(conexao)
 
+        # Converter a lista de clientes em uma lista de dicionários
+        dados = []
+        for cliente in clientes:
+            dados.append({
+                'cpf': cliente[0],
+                'nome_completo': cliente[1],
+                'empresa': cliente[2],
+                'funcoes': cliente[3]
+            })
+
+        # Retornar os dados em formato JSON
+        return jsonify({'data': dados})
+    except Exception as e:
+        print(f"Erro: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 
 # Função para obter dados da tabela clientes
@@ -245,7 +265,7 @@ def index_colaborador():
         return render_template('index_colaborador.html', permissions=permissions)
     else:
         # Redireciona para a rota no blueprint
-        return redirect(url_for('main_routes.login_colaborador'))
+        return redirect(url_for('main_routes.tela_login_colaborador'))
 
     
 @main_routes.route('/unauthorized')
@@ -369,6 +389,7 @@ def permissao_individual(cpf):
             # Atualizar informações pessoais
             cursor.execute("SELECT * FROM clientes WHERE cpf=%s", (cpf,))
             user = cursor.fetchone()
+            
 
             if user:
                 nome_completo = request.form.get('nome_completo')
@@ -379,7 +400,7 @@ def permissao_individual(cpf):
                 numero = request.form.get('numero')
                 complemento = request.form.get('complemento')
                 empresa = request.form.get('empresa')
-
+                print(user)
                 # Verificar se os valores foram alterados
                 if nome_completo != user['nome_completo']:
                     user['nome_completo'] = nome_completo
@@ -457,6 +478,9 @@ def permissao_individual(cpf):
     else:
         abort(404)
 
+def new_func(cep):
+    return cep
+
 
 @main_routes.route('/empresas_cadastradas')
 def visualizar_empresas():
@@ -487,6 +511,10 @@ def usuario_cadastrado():
         login_info = cursor.fetchone()
 
         if login_info:
+            # Atualiza o status na tabela login_cliente como "ativado"
+            cursor.execute("UPDATE login_cliente SET status='ativado' WHERE cpf_cliente=%s", (cpf_cliente,))
+            mysql.connection.commit()
+
             # Obtendo informações do cliente associado ao login
             cursor.execute("SELECT nome_completo FROM clientes WHERE cpf=%s", (cpf_cliente,))
             cliente_info = cursor.fetchone()
@@ -498,18 +526,42 @@ def usuario_cadastrado():
                 # Se houver informações de login, você pode passá-las para o template
                 return render_template('usuario_cadastrado.html', nome_do_usuario=nome_do_usuario, login_cadastrado=login_cadastrado)
             else:
-                flash(f'Informações do cliente para CPF {cpf_cliente} não encontradas.', 'error')
+                flash('Informações do cliente para CPF não encontradas.', 'error')
                 return redirect(url_for('main_routes.criacao_login', cpf_cliente=cpf_cliente))
+
         else:
-            # Se não houver informações de login, você pode lidar com isso de acordo com sua lógica
-            flash(f'Login para CPF {cpf_cliente} não encontrado.', 'error')
+            flash('Login para CPF não encontrado.', 'error')
             return redirect(url_for('main_routes.criacao_login', cpf_cliente=cpf_cliente))
+
     except Exception as e:
+        mysql.connection.rollback()
         flash(f'Erro ao obter informações de login: {str(e)}', 'error')
         return redirect(url_for('main_routes.criacao_login', cpf_cliente=cpf_cliente))
+
     finally:
         cursor.close()
 
+@main_routes.route('/verificar_status_cliente')
+def verificar_status_cliente():
+    cpf_cliente = request.args.get('cpf_cliente')  # Obtemos o CPF a partir dos argumentos da URL
+    cursor = mysql.connection.cursor()
+
+    try:
+        # Consulta para verificar o status do cliente usando o cpf_cliente
+        cursor.execute("SELECT status FROM login_cliente WHERE cpf_cliente=%s", (cpf_cliente,))
+        cliente_status = cursor.fetchone()
+        cursor.close()
+        
+        # Verifica se o cliente está ativo ou não
+        if cliente_status and cliente_status['status'] == 'ativado':
+            return jsonify({'status': 'ativado'})
+        else:
+            return jsonify({'status': 'desativado'})
+
+    except Exception as e:
+        # Imprime o erro e retorna um status de erro
+        print(f"Erro ao verificar o status do cliente: {e}")
+        return jsonify({'status': 'erro', 'mensagem': str(e)}), 500
 
 @main_routes.route('/criacao_login/<cpf_cliente>', methods=['GET', 'POST'])
 def criacao_login(cpf_cliente):
@@ -553,6 +605,25 @@ def criacao_login(cpf_cliente):
 
     # Aqui você pode usar o valor de 'cpf_cliente' como quiser
     return render_template('criacao_login.html', cpf_cliente=cpf_cliente)
+
+@main_routes.route('/obter_status_clientes')
+def obter_status_clientes():
+    cursor = mysql.connection.cursor()
+    try:
+        # Seleciona o CPF e o status de todos os clientes na tabela login_cliente
+        cursor.execute("SELECT cpf_cliente, status FROM login_cliente")
+        clientes_status = cursor.fetchall()
+        # Transforma o resultado em uma lista de dicionários
+        clientes = [{'cpf': cliente['cpf_cliente'], 'status': cliente['status']} for cliente in clientes_status]
+    except Exception as e:
+        app.logger.error(f'Erro ao buscar o status dos clientes: {e}')
+        return jsonify({'error': 'Não foi possível buscar o status dos clientes'}), 500
+    finally:
+        cursor.close()
+    
+    # Retorna os dados como JSON
+    return jsonify(clientes)
+
 
 @main_routes.route('/bloquear_cliente/<cpf>', methods=['POST'])
 def bloquear_cliente(cpf):

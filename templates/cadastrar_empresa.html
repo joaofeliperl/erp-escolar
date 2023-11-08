@@ -154,14 +154,14 @@
 
         <div class="mb-4">
             <label for="rua" class="block text-gray-600 text-sm font-semibold mb-2">Rua: *</label>
-            <input type="text" name="rua" id="rua"
+            <input readonly type="text" name="rua" id="rua"
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 required>
         </div>
 
         <div class="mb-4">
-            <label for="bairro" class="block text-gray-600 text-sm font-semibold mb-2">Bairro: *</label>
-            <input type="text" name="bairro" id="bairro"
+            <label  for="bairro" class="block text-gray-600 text-sm font-semibold mb-2">Bairro: *</label>
+            <input readonly type="text" name="bairro" id="bairro"
                 class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
                 required>
         </div>
@@ -189,6 +189,7 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
     <script src="{{ url_for('static', filename='js/cadastrar_empresa.js') }}"></script>
     <script src="../static/js/components/sidebar.js"></script>
+    <script src="../static/js/components/filtro_cep.js"></script>
 
 </body>
 

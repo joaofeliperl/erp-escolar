@@ -6,12 +6,7 @@ function formatarCPF(cpf) {
     return cpf;
 }
 
-// Função para formatar o CEP
-function formatarCEP(cep) {
-    cep = cep.replace(/\D/g, ''); // Remove caracteres não numéricos
-    cep = cep.replace(/(\d{5})(\d)/, '$1-$2');
-    return cep;
-}
+
 
 // Adiciona um ouvinte de eventos para o campo CPF
 document.getElementById('cpf').addEventListener('input', function (event) {
@@ -19,11 +14,6 @@ document.getElementById('cpf').addEventListener('input', function (event) {
     input.value = formatarCPF(input.value);
 });
 
-// Adiciona um ouvinte de eventos para o campo CEP
-document.getElementById('cep').addEventListener('input', function (event) {
-    var input = event.target;
-    input.value = formatarCEP(input.value);
-});
 
 function formatarContato(input) {
     // Remove qualquer caractere não numérico
@@ -56,3 +46,4 @@ empresaLabel.addEventListener('mouseover', () => {
 empresaLabel.addEventListener('mouseout', () => {
     tooltipEmpresa.style.display = 'none';
 });
+
